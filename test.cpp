@@ -147,7 +147,7 @@ void CreateSMIOptions::createCmdLineLine()
     
     
     // create select query options Mandatory
-    pcmdline->addOptionsToDesc(selectQueryMandatoryOptions, {{"format", po::value<std::string>()->required(), "Specify the output format"}});
+    pcmdline->addOptionsToDesc(selectQueryMandatoryOptions, {{"format", po::value<std::string>(), "Specify the output format"}});
 
     // create select query options plus
     pcmdline->addOptionsToDesc(selectQueryPlusOptions, {{
@@ -183,15 +183,14 @@ void CreateSMIOptions::createCmdLineLine()
         ("help-query-gpu", "List of valid properties to query for the switch \"--query-gpu\"");
     
     //dmon [plus any of] option
-    pcmdline->addOptionsToDesc(dmonOptions,{{
-        {"id,i",    po::value<int>()->value_name("[-i | --id]"), "Comman separated Enumeration index, PCI bus ID or UUID"},
-        {"delay,d", po::value<int>()->value_name("[-d | --delay]")->default_value(1), "Collection delay/interval in seconds [default=1sec]"},
-        {"count,c", po::value<int>()->value_name("[-c | --count]"), "Collection specified number of samples and exit"},
-        {"help,h", po::value<int>()->value_name("[-h | --help]"), "Display format specifiers."}
-    }});
+    dmonOptions.add_options()
+        ("id,i", po::value<int>()->value_name("[-i | --id]"), "Comman separated Enumeration index, PCI bus ID or UUID")
+        ("delay,d", po::value<int>()->value_name("[-d | --delay]")->default_value(1), "Collection delay/interval in seconds [default=1sec]")
+        ("count,c", po::value<int>()->value_name("[-c | --count]"), "Collection specified number of samples and exit")
+        ("help,h", po::value<int>()->value_name("[-h | --help]"), "Display format specifiers.");
 
 
-    pcmdline->addAllOptions(allDesc, mainDesc, listOptions, queryOptions, selectQueryOptions, hiddenOptions, dmonOptionsHelp);
+    pcmdline->addAllOptions(allDesc, mainDesc, listOptions, queryOptions, selectQueryOptions, hiddenOptions);
 }
 
 void CreateSMIOptions::parseCmdLineArgs(int argc, char** argv)

@@ -20,20 +20,26 @@ void OptionHandler::handler()
 
 void OptionStartWithQueryOP::handler( )
 {
+    cso->debugInfo();
     if (cso->getvm().count("query-gpu"))
     {
-        // cso->updatevm("query-gpu", cso->unrecognized_options, cso->selectQueryMandatoryOptions, false);
-        // if (!cso->getvm().count("format"))
-        // {
-        //     std::cout << "--format= switch is missing, Please run sdc-smi -h for help\n";
-        // }
+        std::cout << "-----------\n";
+        for(auto ele : cso->unrecognized_options)
+        {
+            std::cout << "ele = " << ele << std::endl;
+        }
+        cso->updatevm("query-gpu", cso->unrecognized_options, cso->selectQueryMandatoryOptions, false);
+        if (!cso->getvm().count("format"))
+        {
+            std::cout << "--format= switch is missing, Please run sdc-smi -h for help\n";
+        }
 
 
-        // cso->updatevm("query-gpu", cso->unrecognized_options, cso->selectQueryPlusOptions, true, cso->selectQueryMandatoryOptions);
+        cso->updatevm("query-gpu", cso->unrecognized_options, cso->selectQueryPlusOptions, true, cso->selectQueryMandatoryOptions);
         
         // std::cout << "format = " << cso->getvm()["format"].as<std::string>() << std::endl;
-        // std::cout << "filename = " << cso->getvm()["filename"].as<std::string>() << std::endl;
-        // std::cout << "loop = " << cso->getvm()["loop"].as<int>() << std::endl;
+        std::cout << "filename = " << cso->getvm()["filename"].as<std::string>() << std::endl;
+        std::cout << "loop = " << cso->getvm()["loop"].as<int>() << std::endl;
     }
 }
 

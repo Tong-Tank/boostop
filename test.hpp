@@ -168,13 +168,14 @@ public:
     // T is std::vector<std::string> type which is unrecognized options
     // U is options_description type which is [ plus any of ] ops
 
-    template<typename T, typename U/* typename E = std::monostate*/ >
-    void updatevm(std::string op, const T& t, const U& u, bool check = true/* const E& e = {}*/)
+    template<typename T, typename U, typename E = std::monostate >
+    void updatevm(std::string op, const T& t, const U& u, bool check = true, const E& e = {})
     {
         /**
          * may be can use require
          */
         // static_assert(std::is_same_v<T, std::vector<std::string>> || std::is_same_v<U, po::options_description> || std::is_same_v<E, po::options_description> || std::is_same_v<E, std::monostate>, "T Or U type is not correct.");
+        
         auto parsed = po::command_line_parser(t).options(u).allow_unregistered().style(
             po::command_line_style::unix_style).run();
         po::store(parsed, vm);
@@ -189,11 +190,11 @@ public:
                 std::cout << "string_key = " << opt.string_key << std::endl;
                 if (!u.find_nothrow(opt.string_key, false))
                 {
-                    // if constexpr (std::is_same_v<E, po::options_description>)
-                    // {
-                    //     if(e.find_nothrow(opt.string_key, false))
-                    //         continue;
-                    // }
+                    if constexpr (std::is_same_v<E, po::options_description>)
+                    {
+                        if(e.find_nothrow(opt.string_key, false))
+                            continue;
+                    }
                     
                     
                     std::cerr << std::format("Error: {} is not valid for this command, please run \'sdc-smi -h\' for help.\n", op);
@@ -252,7 +253,7 @@ public:
     po::options_description selectQueryPlusOptions{pcmdline->createDescription(std::string{"[plus any of]"})}; //select query options plus
     po::options_description hiddenOptions{pcmdline->createDescription(std::string{"Hidden Options"})}; // Hidden Options for option name which start with query like query-gpu query-supported-clocks ...
     // po::options_description hiddenOptionsWithPositional{pcmdline->createDescription(std::string{"Hidden Options With Positional"})}; // Hidden Options for option without -- or -, like dmon/daemon
-    po::options_description dmonOptions{pcmdline->createDescription(std::string{"GPU statistics are displayed in scrolling format with one line per sampling interval. Metrics to be monitored can be adjusted based on the width of termianl window.\nUsage: sdc-smi dmon [options]\n\nOptions include"})};
+    CustomOptionsDescription dmonOptions{std::string{"GPU statistics are displayed in scrolling format with one line per sampling interval. Metrics to be monitored can be adjusted based on the width of termianl window.\nUsage: sdc-smi dmon [options]\n\nOptions include"}};
     po::options_description dmonOptionsHelp{pcmdline->createDescription(std::string{"dmon help output"})};
     std::vector<std::string> unrecognized_options;
 private:
